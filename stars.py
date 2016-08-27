@@ -3,6 +3,7 @@ import os
 import glob
 import json
 from datetime import datetime
+
 from llnl.util.filesystem import mkdirp
 from spack.util.executable import which
 curl = which('curl')
@@ -45,10 +46,14 @@ def get_stars(*repos, **kwargs):
                 return json.load(f)
 
     jdata = reduce(lambda x,y:x+y, [load_json(r) for r in repos])
-    return sorted(datetime.strptime(js['starred_at'], '%Y-%m-%dT%H:%M:%SZ')
-                  for js in jdata)
 
+    users = set()
+    unique_stars = []
+    for js in jdata:
+        username = js['user']['login']
+        if username not in users:
+            unique_stars.append(
+                datetime.strptime(js['starred_at'], '%Y-%m-%dT%H:%M:%SZ'))
+        users.add(username)
 
-x = get_stars('hpcugent/easybuild')
-print x
-print len(x)
+    return sorted(unique_stars)
