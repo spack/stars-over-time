@@ -9,19 +9,31 @@ from spack.util.executable import which
 curl = which('curl')
 
 
-def get_stars(*repos, **kwargs):
-    per_page = kwargs.get('per_page', 100)
-
-    def get(repo, i):
-        url = 'https://api.github.com/repos/%s/stargazers' % repo
+def get_all_pages(url, headers=[], per_page=100):
+    def get_page(url, i):
         url += '?page=%d' % i
         url += '&per_page=%d' % per_page
-        string = curl(
-            '-H', 'Accept: application/vnd.github.v3.star+json', url,
-            output=str)
 
+        args = []
+        for header in headers:
+            args += ['-H', header]
+        args += [url]
+
+        string = curl(*args, output=str)
         return json.loads(string)
 
+    all_pages = []
+    i = 1
+    page = get_page(url, i)
+    while page:
+        all_pages.extend(page)
+        i += 1
+        page = get_page(url, i)
+
+    return all_pages
+
+
+def get_stars(*repos):
     def load_json(repo):
         cache_path = os.path.join('repos/%s.json' % repo)
 
@@ -30,17 +42,12 @@ def get_stars(*repos, **kwargs):
             mkdirp(parent)
 
         if not os.path.exists(cache_path):
-            cache = []
-            i = 1
-            stamps = get(repo, i)
-            while stamps:
-                cache.extend(stamps)
-                i += 1
-                stamps = get(repo, i)
-
+            json_data = get_all_pages(
+                'https://api.github.com/repos/%s/stargazers' % repo,
+                headers=['Accept: application/vnd.github.v3.star+json'])
             with open(cache_path, 'w') as f:
-                f.write(json.dumps(cache))
-            return cache
+                f.write(json.dumps(json_data))
+            return json_data
         else:
             with open(cache_path, 'r') as f:
                 return json.load(f)
