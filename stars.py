@@ -1,4 +1,4 @@
-#!/usr/bin/env spack python
+#!/usr/bin/env spack-python
 import os
 import glob
 import json
