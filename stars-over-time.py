@@ -1,16 +1,14 @@
-#!/usr/bin/env spack-python
+#!/usr/bin/env python
 from __future__ import division
 
 import os
 import json
 import sys
-from github import Github
 from datetime import timedelta as td
 
+from github import Github
 import numpy as np
 import matplotlib.pyplot as plt
-
-from llnl.util.filesystem import mkdirp
 
 
 def dump(data, out):
@@ -24,6 +22,31 @@ def get_token():
 
 #: GitHub object for fetching data about repos
 gh = Github(get_token())
+
+
+def mkdirp(*paths, **kwargs):
+    """Creates a directory, as well as parent directories if needed.
+
+    Arguments:
+        paths (str): paths to create with mkdirp
+
+    Keyword Aguments:
+        mode (permission bits or None, optional): optional permissions to
+            set on the created directory -- use OS default if not provided
+    """
+    mode = kwargs.get('mode', None)
+    for path in paths:
+        if not os.path.exists(path):
+            try:
+                os.makedirs(path)
+                if mode is not None:
+                    os.chmod(path, mode)
+            except OSError as e:
+                if e.errno != errno.EEXIST or not os.path.isdir(path):
+                    raise e
+        elif not os.path.isdir(path):
+            raise OSError(errno.EEXIST, "File already exists", path)
+
 
 #: cache of repo star data
 cache = {}
@@ -44,9 +67,18 @@ def get_stars(*repos):
 
     users_to_stars = {}
     for repo_name in repos:
+        path = os.path.join('stargazers', repo_name + '.json')
+        parent = os.path.dirname(path)
+        mkdirp(parent)
+        json_data = []
+
         stargazers = get_stargazers_with_dates(repo_name)
         for sg in stargazers:
             users_to_stars.setdefault(sg.user.login, []).append(sg.starred_at)
+            json_data.append(sg.raw_data)
+
+        with open(path, 'w') as f:
+            dump(json_data, f)
 
     return sorted(min(v) for v in users_to_stars.values())
 
