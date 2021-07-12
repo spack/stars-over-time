@@ -4,23 +4,29 @@ This script plots github stars over time, as well as the *rate* of star accumula
 
 Usage:
 
-```
+```console
 $ ./stars-over-time.py
-spack                                   838
-openhpc/ohpc                            367
-open-mpi/ompi                           713
-sylabs/singularity                      1041
-easybuild (all 4 repos)                 412
-mfem                                    283
-ck                                      263
-$ ls
-README.md  requirements.txt  stargazers/  stars-over-time.pdf  stars-over-time.py*  stars-per-day.pdf
+(spackle):stars> ./stars-over-time.py
+singularity                             2134
+spack                                   2134
+chapel                                  1323
+openmpi                                 1298
+openhpc                                 572
+easybuild (all 4 repos)                 561
+mpich                                   305
+shifter                                 315
+charliecloud                            212
+singularityCE                           55
 ```
 
-`stars-over-time.pdf` will have plots of the *cumulative* stars over time, while stars-per-day has
-a plot of the stars added to the repo per-day, averaged over a 60-day sliding window (otherwise
-it's too noisy for most repos).
+This creates two files:
+* `stars-over-time.pdf` will have plots of the *cumulative* stars over time.
+* `stars-per-day.pdf` has a plot of the stars added to the repo per-day, averaged over a 60-day
+   sliding window (otherwise it's too noisy for most repos).
 
+They look like this:
+
+<img src="https://raw.githubusercontent.com/spack/stars-over-time/main/images/stars-over-time.svg" width="384" valign="middle" alt="Plot of cumulative stars over time for above repositories"/>   <img src="https://raw.githubusercontent.com/spack/stars-over-time/main/images/stars-per-day.svg" width="384" valign="middle" alt="Plot of stars per day for above repositories"/>
 
 ## License
 
