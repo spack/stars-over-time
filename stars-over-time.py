@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from __future__ import division
 
 import os
@@ -93,7 +93,7 @@ def stars_per_day(dates, count, window=60):
         return td.total_seconds() / 86400
 
     spd = [float('nan')] * len(count)
-    pairs = zip(dates, count)
+    pairs = list(zip(dates, count))
 
     # start after the first window
     start = 0
@@ -127,12 +127,12 @@ def do_plots(*label_repo_list_tuples):
         counts = range(1, len(dates) + 1)
         spd = stars_per_day(dates, counts, window=window)
 
-        print "%-40s%d" % (label, len(counts))
+        print("%-40s%d" % (label, len(counts)))
         over_time_ax.plot(dates, counts, label=label)
         per_day_ax.plot(dates, spd, label=label)
 
     # first figure
-    over_time_ax.set_title('GitHub Stars')
+    over_time_ax.set_title('GitHub stars over time')
     over_time_ax.legend(loc='upper left')
     over_time_ax.spines['top'].set_visible(False)
     over_time_ax.spines['right'].set_visible(False)
@@ -153,21 +153,38 @@ def do_plots(*label_repo_list_tuples):
 
 
 do_plots(
-    ('spack', ['spack/spack']),
-    ('openhpc/ohpc', ['openhpc/ohpc']),
-    ('open-mpi/ompi', ['open-mpi/ompi']),
-    ('sylabs/singularity', ['sylabs/singularity']),
+    ('singularity', ['hpcng/singularity']),
+#    ('singularity', ['hpcng/singularity', 'sylabs/singularity']),
+#    ('vcpkg', ['microsoft/vcpkg']),
+#    ('conan', ['conan-io/conan']),
+#    ('nixpkgs', ['nixos/nixpkgs']),
+#    ('nix',     ['nixos/nix']),
+    ('spack',   ['spack/spack']),
+#    ('build2',   ['build2/build2']),
+    ('chapel', ['chapel-lang/chapel']),
+    ('openmpi', ['open-mpi/ompi']),
+    ('openhpc', ['openhpc/ohpc']),
     ('easybuild (all 4 repos)', ['easybuilders/easybuild',
                                  'easybuilders/easybuild-framework',
                                  'easybuilders/easybuild-easyblocks',
                                  'easybuilders/easybuild-easyconfigs']),
-    ('easybuild (main repo)', ['easybuilders/easybuild']),
-    ('mfem', ['mfem/mfem']),
-    ('ck', ['ctuning/ck']),
-
+    ('mpich', ['pmodels/mpich']),
+#    ('llnl/caliper', ['llnl/caliper']),
+    ('shifter', ['NERSC/shifter']),
+    ('charliecloud', ['hpc/charliecloud']),
+    ('singularityCE', ['sylabs/singularity']),
+#    ('cea-hpc', ['modules']),
+#    ('kokkos', ['kokkos/kokkos']),
+#    ('mfem', ['mfem/mfem']),
+#    ('raja', ['llnl/raja']),
+#    ('flux', ['flux-framework/flux-core']),
+#    ('easybuild (main repo)', ['easybuilders/easybuild']),
+#    ('hatchet', ['llnl/hatchet']),
+#    ('ck', ['ctuning/ck']),
 #    ('hashdist', ['hashdist/hashdist']),
 #    ('trilinos', ['trilinos/Trilinos']),
 #    ('rose', ['rose-compiler/rose']),
+#    ('pip', ['pypa/pip']),
 #    ('conda', ['conda/conda']),
 #    ('linuxbrew', ['linuxbrew/brew']),
 #    ('kubernetes', ['kubernetes/kubernetes']),
